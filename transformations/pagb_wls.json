@@ -1,0 +1,18 @@
+{
+  "ioc_code": "pagb",
+  "sensor": "wls",
+  "notes": "",
+  "skip": false,
+  "start": "2022-01-01T00:00:00",
+  "end": "2023-11-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+    [
+      "2023-04-12T05:54:00",
+      "2023-04-12T06:06:00"
+    ]
+  ],
+  "dropped_timestamps": [],
+  "segments": []
+}

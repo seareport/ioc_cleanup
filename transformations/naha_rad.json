@@ -1,0 +1,18 @@
+{
+  "ioc_code": "naha",
+  "sensor": "rad",
+  "notes": "",
+  "skip": false,
+  "start": "2022-01-01T00:00:00",
+  "end": "2023-11-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [],
+  "dropped_timestamps": [
+    "2022-08-09T23:50:00",
+    "2022-08-09T23:52:00",
+    "2022-08-09T23:59:00",
+    "2022-08-10T00:09:00"
+  ],
+  "segments": []
+}
