@@ -16,6 +16,7 @@ def dump_transformation(
     path = f"{dest_dir}/{trans.ioc_code}_{trans.sensor}.json"
     with open(path, "w") as fd:
         fd.write(trans.model_dump_json(indent=2, round_trip=True))
+        fd.write("\n")
 
 
 def load_transformation(
