@@ -1,0 +1,19 @@
+{
+  "ioc_code": "olan",
+  "sensor": "rad",
+  "notes": "",
+  "skip": false,
+  "wip": false,
+  "start": "2022-01-01T00:00:00",
+  "end": "2023-11-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+    [
+      "2022-10-18T10:22:00",
+      "2022-10-20T11:52:00"
+    ]
+  ],
+  "dropped_timestamps": [],
+  "segments": []
+}

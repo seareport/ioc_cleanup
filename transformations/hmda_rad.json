@@ -1,0 +1,23 @@
+{
+  "ioc_code": "hmda",
+  "sensor": "rad",
+  "notes": "",
+  "skip": false,
+  "wip": false,
+  "start": "2022-01-01T00:00:00",
+  "end": "2023-11-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+    [
+      "2023-09-14T00:19:00",
+      "2023-09-14T01:22:00"
+    ],
+    [
+      "2023-09-14T03:41:00",
+      "2023-09-14T06:34:00"
+    ]
+  ],
+  "dropped_timestamps": [],
+  "segments": []
+}

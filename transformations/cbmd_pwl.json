@@ -1,0 +1,14 @@
+{
+  "ioc_code": "cbmd",
+  "sensor": "pwl",
+  "notes": "Needs work. Skipping for now",
+  "skip": true,
+  "wip": true,
+  "start": "2022-01-01T00:00:00",
+  "end": "2023-11-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [],
+  "dropped_timestamps": [],
+  "segments": []
+}
