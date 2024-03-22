@@ -17,6 +17,7 @@ class Transformation(pydantic.BaseModel):
     sensor: str
     notes: str = ""
     skip: bool = False
+    wip: bool = False
     start: datetime.datetime
     end: datetime.datetime
     high: float | None = None
@@ -24,5 +25,3 @@ class Transformation(pydantic.BaseModel):
     dropped_date_ranges: list[tuple[datetime.datetime, datetime.datetime]] = []
     dropped_timestamps: list[datetime.datetime] = []
     segments: list[Segment] = []
-
-    # model_config = pydantic.ConfigDict(arbitrary_types_allowed=True)
