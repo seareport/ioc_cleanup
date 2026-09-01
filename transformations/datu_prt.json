@@ -2,7 +2,7 @@
   "ioc_code": "datu",
   "sensor": "prt",
   "notes": "DART buoy. Contains steps",
-  "skip": false,
+  "skip": true,
   "wip": true,
   "start": "2020-01-01T00:00:00",
   "end": "2026-01-01T00:00:00",

@@ -9,5 +9,8 @@
   "high": null,
   "low": null,
   "dropped_date_ranges": [],
-  "dropped_timestamps": []
+  "dropped_timestamps": [],
+  "breakpoints": [
+    "2020-05-01T00:00:00"
+  ]
 }
