@@ -1,22 +1,21 @@
 {
-    "ioc_code": "mars",
-    "sensor": "rad",
-    "notes": "no data before march 2022",
-    "skip": false,
-    "wip": false,
-    "start": "2020-01-01T00:00:00",
-    "end": "2026-01-01T00:00:00",
-    "high": null,
-    "low": null,
-    "dropped_date_ranges": [
+  "ioc_code": "mars",
+  "sensor": "rad",
+  "notes": "no data before march 2022",
+  "skip": false,
+  "wip": false,
+  "start": "2020-01-01T00:00:00",
+  "end": "2026-01-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
         ["2022-11-24 12:15:00", "2022-11-24 12:18:00"]
-    ],
-    "dropped_timestamps": [
-        "2023-12-13 07:15:00",
-        "2022-11-24T12:19:00",
-        "2023-12-13 08:15:00",
-        "2023-12-13 08:16:00",
-        "2025-03-23T15:30:00"
-    ],
-    "segments": []
-  }
+  ],
+  "dropped_timestamps": [
+    "2023-12-13 07:15:00",
+    "2022-11-24T12:19:00",
+    "2023-12-13 08:15:00",
+    "2023-12-13 08:16:00",
+    "2025-03-23T15:30:00"
+  ]
+}

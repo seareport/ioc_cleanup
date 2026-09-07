@@ -14,8 +14,7 @@ from . import _models
 from . import _searvey
 
 # PATH
-JSON_DIR = Path("transformations")
-IOC = _searvey.get_meta()
+JSON_DIR = _constants.TRANSFORMATIONS_DIR
 OPTS = {
     "constit": "auto",
     "method": "ols",  # ols is faster and good for missing data (Ponchaut et al., 2001)
@@ -49,10 +48,17 @@ def dump_transformation(
         fd.write("\n")
 
 
+def resolve_transformation_dir() -> Path:
+    if JSON_DIR.exists():
+        return JSON_DIR
+    else:
+        return Path(_constants.REGISTRY.fetch())
+
+
 def load_transformation(
     ioc_code: str,
     sensor: str,
-    src_dir: str | os.PathLike[str] = _constants.TRANSFORMATIONS_DIR,
+    src_dir: str | os.PathLike[str] = JSON_DIR,
 ) -> _models.Transformation:
     """
     Load a transformation definition for a station and sensor.
@@ -69,7 +75,9 @@ def load_transformation(
     Returns:
         Parsed transformation model.
     """
-    path = f"{src_dir}/{ioc_code}_{sensor}.json"
+    if src_dir is None:
+        src_dir = resolve_transformation_dir()
+    path = Path(src_dir) / f"{ioc_code}_{sensor}.json"
     return load_transformation_from_path(path)
 
 
@@ -121,22 +129,32 @@ def transform(df: pd.DataFrame, transformation: _models.Transformation | None = 
             0
         ]  # this step is needed to select only timestamps within the DataFrame time window
         df.loc[t_[drop_index], :] = np.nan
-    df.attrs["breakpoints"] = sorted(transformation.breakpoints)
+    df.attrs["breakpoints"] = [
+        b.isoformat() for b in sorted(transformation.breakpoints)
+    ]  # isoformat otherwise the parquet export will fail
     df.attrs["status"] = "transformed"
     return df
 
 
-def demean_signal(df: pd.Series) -> pd.Series:
+def get_segments(df: pd.Series) -> list[pd.Series]:
+    df = df.copy()
     if len(df.attrs["breakpoints"]) > 0:
         chunks = []
         prev = df.index.min()
         for bp in df.attrs["breakpoints"]:
-            mean = df.loc[prev:bp].mean()
-            chunks.append(df.loc[prev:bp] - mean)
+            chunks.append(df.loc[prev:bp])
             prev = bp
-        mean = df.loc[prev:].mean()
-        chunks.append(df.loc[prev:] - mean)
-        df = pd.concat(chunks)
+        chunks.append(df.loc[prev:])
+    else:
+        chunks = [df]
+    return chunks
+
+
+def demean_signal(df: pd.Series) -> pd.Series:
+    chunks = get_segments(df)
+    for ichunk, chunk in enumerate(chunks):
+        chunks[ichunk] -= chunk.mean()
+    df = pd.concat(chunks)
     return df
 
 
@@ -144,8 +162,7 @@ def clean(df: pd.DataFrame, station: str, sensor: str) -> pd.Series:
     """
     Clean a raw IOC time series using the corresponding transformation file.
 
-    This is a convenience wrapper around `transform` that loads the
-    transformation from disk and returns a single sensor series.
+    Wrapper around `transform` function: returns a single sensor series.
 
     Parameters:
         df: Raw IOC station data.
@@ -156,7 +173,9 @@ def clean(df: pd.DataFrame, station: str, sensor: str) -> pd.Series:
         Cleaned sea-level time series for the selected sensor.
     """
     trans = load_transformation_from_path("./transformations/" + station + "_" + sensor + ".json")
-    return transform(df, trans)[sensor]
+    ts = transform(df, trans)[sensor]
+    ts.attrs["cleaning_date"] = pd.Timestamp.now().isoformat()
+    return ts
 
 
 def surge(ts: pd.Series, opts: T.Mapping[str, T.Any], rsmp: int | None) -> pd.Series:
@@ -170,8 +189,7 @@ def surge(ts: pd.Series, opts: T.Mapping[str, T.Any], rsmp: int | None) -> pd.Se
     Parameters:
         ts: Sea-level time series.
         opts: UTide solver options.
-        rsmp: Optional resampling interval in minutes. If provided, the
-            series is resampled before tidal analysis.
+        rsmp: Optional resampling interval in minutes. If provided, the series is resampled before tidal analysis.
 
     Returns:
         Surge (non-tidal residual) time series.
@@ -211,8 +229,12 @@ def load_surge_ts_for_year(
     demean: bool,
 ) -> pd.Series:
     c_ = load_clean_ts_for_year(station, sensor, year, folder, demean=demean)
-    lat = IOC[IOC.ioc_code == station].lat.values[0]
+    ioc = _searvey.get_meta()
+    lat = ioc[ioc.ioc_code == station].lat.values[0]
     OPTS["lat"] = lat
-    s_ = surge(c_, OPTS, RESAMPLE)
-    s_.columns = [sensor]  # type: ignore[attr-defined]
-    return s_
+    if not c_.empty:
+        s_ = surge(c_, OPTS, RESAMPLE)
+        s_.columns = [sensor]  # type: ignore[attr-defined]
+        return s_
+    else:
+        return pd.Series()

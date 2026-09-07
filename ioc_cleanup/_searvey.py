@@ -87,6 +87,8 @@ def download_year_station(
         year: Year to download.
         data_folder: Base directory for storing downloaded data.
     """
+    from ioc_cleanup._constants import METADATA
+
     data_folder = os.path.abspath(data_folder)
     year_folder = os.path.join(data_folder, str(year))
     os.makedirs(year_folder, exist_ok=True)
@@ -96,8 +98,11 @@ def download_year_station(
         dict_df = download_raw([station], start, end)
         df = dict_df[station]
         if not df.empty:
-            df.to_parquet(f"{year_folder}/{station}.parquet")
             logger.info(f"  Saved {station} for {year}")
+            ioc = get_meta()
+            meta = ioc[ioc.ioc_code == station].iloc[0].to_dict()
+            df.attrs = {**METADATA, **{k: str(v) for k, v in meta.items()}}  # type: ignore[dict-item]
+            df.to_parquet(f"{year_folder}/{station}.parquet")
     except Exception as e:
         logger.error(f"Error for {station} in {year}: {e}")
 
@@ -106,7 +111,7 @@ def load_station(
     station: str,
     data_dir: Path = Path("./data"),
     start_year: int = 2011,
-    end_year: int = 2024,
+    end_year: int = 2026,
 ) -> pd.DataFrame:
     """
     Load multi-year IOC data for a station from local Parquet files.
@@ -125,14 +130,16 @@ def load_station(
     for year in range(start_year, end_year):
         path = data_dir / str(year) / f"{station}.parquet"
         if not os.path.exists(path):
+            logger.debug(f"Path does not exist: {path}; no data for {year}")
             continue
         df = pd.read_parquet(path)
         if df.empty:
+            logger.debug(f"DatFrame empty for station {station} in {year}")
             continue
         dfs.append(df)
 
     if dfs:
         return pd.concat(dfs)
     else:
-        logger.error(f"No data found for station {station}")
+        logger.error(f"No data found for station {station} betweeen {start_year} end {end_year}")
         return pd.DataFrame()

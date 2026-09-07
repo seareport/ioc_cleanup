@@ -1,6 +1,6 @@
 {
-  "ioc_code": "kwaj",
-  "sensor": "wls",
+  "ioc_code": "deke",
+  "sensor": "prs",
   "notes": "no data in 2020-2021. Partial and fragmented signal in 2024",
   "skip": false,
   "wip": false,
@@ -210,7 +210,6 @@
     "2024-09-27T14:12:00",
     "2024-09-27T14:28:00"
   ],
-  "segments": [],
   "tsunami": [
   ]
 }

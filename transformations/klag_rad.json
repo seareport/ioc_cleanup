@@ -11,6 +11,5 @@
   "dropped_date_ranges": [
     ["2024-03-20 08:52:00", "2024-03-20 09:48:00"]
   ],
-  "dropped_timestamps": [],
-  "segments": []
+  "dropped_timestamps": []
 }

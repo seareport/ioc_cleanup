@@ -1,14 +1,15 @@
 [project]
 site_name = "IOC Cleanup"
-site_url = "https://tomsail.github.io/ioc_cleanup/"
+site_url = "https://oceanmodeling.github.io/ioc_cleanup/"
+repo_url = "https://github.com/oceanmodeling/ioc_cleanup"
 
 docs_dir = "docs"
 site_dir = "site"
 
 nav = [
   {"Home" = "index.md"},
-  {"Concept" = "concept.md"},
-  {"Reference" = [
+  {"Details" = "concept.md"},
+  {"User Guide" = [
     {"JSONs" = "reference/json-schema.md"},
     {"Data Architecture" = "reference/data-layout.md"},
     {"API" = "reference/python-api.md"},
@@ -16,8 +17,11 @@ nav = [
   {"Dashboard" = [
     {"Usage" = "workflows/dashboard.md"},
   ]},
-  {"Guidelines" = "guidelines.md"},
+  {"Cleaning Guidelines" = "guidelines.md"},
   {"Contributing" = "contributing.md"},
+  {"Tsunamis" = "tsunami.md"},
+  {"Poster"= "poster.md"},
+  {"Data Access"= "access_data.md"}
 ]
 
 [project.theme]

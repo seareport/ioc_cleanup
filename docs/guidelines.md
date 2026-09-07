@@ -15,7 +15,7 @@ This repository does NOT contain IOC data and does not manage data acquisition.
 In some cases, cleaning is easy and is just about removing spikes
 ### Spikes
 <iframe
-  src="../spikes.html"
+  src="./assets/spikes.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -26,7 +26,7 @@ In some cases, cleaning is easy and is just about removing spikes
 
     See details on the [JSON structure](reference/json-schema/)
 
-### Noise vs. Physical phenomena
+### Numerical vs. Physical phenomena
 
 It becomes more difficult when it comes to distinguishing noise (either numerical or physical e.g. boat wakes) from real physical events (like harbour seiches or tsunamis).
 
@@ -34,7 +34,7 @@ It becomes more difficult when it comes to distinguishing noise (either numerica
 #### Physical - Seiches
 Here an example of what seems to be a harbour seiche in `LA23` - Lampedusa station (IT):
 <iframe
-  src="../seiche.html"
+  src="./assets/seiche.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -47,7 +47,7 @@ Here an example of what seems to be a harbour seiche in `LA23` - Lampedusa stati
 Here is the 2025 Kamchatka Peninsula Tsunami captured by `cres` - Crescent City station (CA, USA):
 
 <iframe
-  src="../tsunami.html"
+  src="./assets/tsunami.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -57,7 +57,7 @@ Here is the 2025 Kamchatka Peninsula Tsunami captured by `cres` - Crescent City 
 Same tsunami and station, detided:
 
 <iframe
-  src="../tsunami_detided.html"
+  src="./assets/tsunami_detided.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -68,11 +68,11 @@ Same tsunami and station, detided:
 
     See details on the [JSON structure](reference/json-schema/)
 
-#### Noise - Numerical
+#### Numerical - Noise
 In some case, numerical noise is easy to isolate like for this station:
 
 <iframe
-  src="../example.html"
+  src="./assets/example.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -83,7 +83,24 @@ In some case, numerical noise is easy to isolate like for this station:
 
     See details on the [JSON structure](reference/json-schema/)
 
-#### Noise - Unknown
+#### Numerical - Flat signal
+Some stations can have parts of flat signal.
+
+<iframe
+  src="./assets/flat.html"
+  width="100%"
+  height="710"
+  style="border:none;">
+</iframe>
+
+!!! tip "Advice for flat signal"
+    Remove flat parts from the data.
+
+    If the flat parts are long enough and easy to isolate, select the flat ranges and paste them in the `dropped_date_ranges`. If it is too complicated (like in this example), you can select multiple part of the data and paste in `dropped_timestamps`.
+
+    See details on the [JSON structure](reference/json-schema/)
+
+#### Numerical - Unknown
 In other case, the nature of the noise is difficult to identify. There could be lots of reasons:
 
  * physical induced noise:
@@ -96,7 +113,7 @@ In other case, the nature of the noise is difficult to identify. There could be 
 
 ##### Example 1
 <iframe
-  src="../noise.html"
+  src="./assets/noise.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -104,7 +121,7 @@ In other case, the nature of the noise is difficult to identify. There could be 
 
 ##### Example 2
 <iframe
-  src="../unknown.html"
+  src="./assets/unknown.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -120,7 +137,7 @@ In other case, the nature of the noise is difficult to identify. There could be 
 Some steps are easy to isolate and deal with. A recurrent error found on tidal stations occurs during DST (Daylight saving time) changes:
 
 <iframe
-  src="../step_simple.html"
+  src="./assets/step_simple.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -140,7 +157,7 @@ Some steps - or offsets - can be caused by mulitple reasons:
   * any ohter unkonwn reason
 
 <iframe
-  src="../step_long.html"
+  src="./assets/step_long.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -179,3 +196,13 @@ Some steps - or offsets - can be caused by mulitple reasons:
 !!! warning "Subjectivity"
      * Cleaning decisions are inherently subjective
      * Different operators may disagree on what should be discarded
+
+### De-tiding
+
+!!! warning "Chunks length for de-tiding"
+    Although `ioc_cleanup` does not directly tackle the de-tiding problem, it leverages de-tiding methods to better isolate and flag bad data on the tide gauges.
+
+    Here are some resources on this matter:
+
+    * Github discussion on [Utide](https://github.com/orgs/oceanmodeling/discussions/25)
+    * Detiding Theory and Practices, cited in the [Book of tides](https://www.researchgate.net/publication/280722791_De-tiding_Theory_and_practice)

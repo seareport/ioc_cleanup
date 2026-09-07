@@ -1,16 +1,15 @@
 {
-    "ioc_code": "dshu",
-    "sensor": "prt",
-    "notes": "DART Station. Contains segments",
-    "skip": true,
-    "wip": true,
-    "start": "2022-01-01T00:00:00",
-    "end": "2025-01-01T00:00:00",
-    "high": null,
-    "low": null,
-    "dropped_date_ranges": [
-    ],
-    "dropped_timestamps": [
-    ],
-    "segments": []
-  }
+  "ioc_code": "dsea",
+  "sensor": "prt",
+  "notes": "DART Station. Contains segments",
+  "skip": true,
+  "wip": true,
+  "start": "2022-01-01T00:00:00",
+  "end": "2025-01-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+  ],
+  "dropped_timestamps": [
+  ]
+}

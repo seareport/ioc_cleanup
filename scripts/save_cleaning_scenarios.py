@@ -27,7 +27,7 @@ def save_interactive_plot(
 ) -> None:
     item = IOC[IOC.ioc_code == station].iloc[0]
     if clean:
-        C._plots.load_surge_tide(station, sensor, start.year, surge=surge, demean=True)
+        ts = C._plots.load_surge_tide(station, sensor, start.year, surge=surge, demean=True)
     else:
         ts = C._searvey.load_station(station, folder, 2020, 2026).sort_index()
         ts = ts[sensor]
@@ -60,21 +60,21 @@ RUNS = [
         "sensor": "rad",
         "start": "2024-10-15",
         "end": "2024-10-29",
-        "out": "docs/spikes.html",
+        "out": "docs/assets/spikes.html",
     },
     {
         "station": "maya",
         "sensor": "pwl",
         "start": "2023-09-01",
         "end": "2023-09-05",
-        "out": "docs/example.html",
+        "out": "docs/assets/example.html",
     },
     {
         "station": "maya",
         "sensor": "pwl",
         "start": "2023-09-01",
         "end": "2023-09-05",
-        "out": "docs/example_clean.html",
+        "out": "docs/assets/example_clean.html",
         "clean": True,
     },
     {
@@ -82,28 +82,28 @@ RUNS = [
         "sensor": "rad",
         "start": "2020-08-07",
         "end": "2020-08-21",
-        "out": "docs/unknown.html",
+        "out": "docs/assets/unknown.html",
     },
     {
         "station": "LA23",
         "sensor": "rad",
         "start": "2021-11-03",
         "end": "2021-11-14",
-        "out": "docs/seiche.html",
+        "out": "docs/assets/seiche.html",
     },
     {
         "station": "cres",
         "sensor": "pwl",
         "start": "2025-07-29",
         "end": "2025-08-03",
-        "out": "docs/tsunami.html",
+        "out": "docs/assets/tsunami.html",
     },
     {
         "station": "cres",
         "sensor": "pwl",
         "start": "2025-07-29",
         "end": "2025-08-03",
-        "out": "docs/tsunami_detided.html",
+        "out": "docs/assets/tsunami_detided.html",
         "surge": True,
     },
     {
@@ -111,7 +111,7 @@ RUNS = [
         "sensor": "prs",
         "start": "2023-07-29",
         "end": "2023-09-01",
-        "out": "docs/noise.html",
+        "out": "docs/assets/noise.html",
         "clean": True,
         "surge": True,
     },
@@ -120,7 +120,7 @@ RUNS = [
         "sensor": "bub",
         "start": "2021-03-27",
         "end": "2021-03-29",
-        "out": "docs/step_simple.html",
+        "out": "docs/assets/step_simple.html",
         "surge": True,
     },
     {
@@ -128,7 +128,14 @@ RUNS = [
         "sensor": "ra2",
         "start": "2023-06-27",
         "end": "2023-07-16",
-        "out": "docs/step_long.html",
+        "out": "docs/assets/step_long.html",
+    },
+    {
+        "station": "LI11",
+        "sensor": "rad",
+        "start": "2025-01-28",
+        "end": "2025-02-03",
+        "out": "docs/assets/flat.html",
     },
 ]
 

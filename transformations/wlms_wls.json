@@ -1,17 +1,21 @@
 {
-    "ioc_code": "wlms",
-    "sensor": "wls",
-    "notes": "",
-    "skip": false,
-    "wip": false,
-    "start": "2022-01-01T00:00:00",
-    "end": "2025-01-01T00:00:00",
-    "high": null,
-    "low": null,
-    "dropped_date_ranges": [
-    ],
-    "dropped_timestamps": [
-    ],
-    "segments": [],
-    "tsunami": []
-  }
+  "ioc_code": "wlms",
+  "sensor": "wls",
+  "notes": "",
+  "skip": false,
+  "wip": false,
+  "start": "2020-01-01T00:00:00",
+  "end": "2026-01-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+    ["2020-05-27T18:59:00", "2020-05-27T19:18:00"],
+    ["2020-07-18T01:00:00", "2020-07-18T07:20:00"]
+  ],
+  "dropped_timestamps": [
+    "2020-11-02T20:15:00",
+    "2020-12-22T18:13:00",
+    "2025-12-19T01:03:00"
+  ],
+  "tsunami": []
+}

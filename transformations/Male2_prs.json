@@ -1,16 +1,15 @@
 {
   "ioc_code": "Male2",
   "sensor": "prs",
-  "notes": "short window covered but clean signal",
+  "notes": "short window covered (2023-2024) but clean signal",
   "skip": false,
   "wip": false,
-  "start": "2022-01-01T00:00:00",
-  "end": "2025-01-01T00:00:00",
+  "start": "2020-01-01T00:00:00",
+  "end": "2026-01-01T00:00:00",
   "high": null,
   "low": null,
   "dropped_date_ranges": [
   ],
   "dropped_timestamps": [
-  ],
-  "segments": []
+  ]
 }

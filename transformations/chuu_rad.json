@@ -1,6 +1,6 @@
 {
-  "ioc_code": "kwaj",
-  "sensor": "wls",
+  "ioc_code": "chuu",
+  "sensor": "rad",
   "notes": "contains steps",
   "skip": false,
   "wip": true,

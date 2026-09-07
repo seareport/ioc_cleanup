@@ -1,5 +1,5 @@
 {
-  "ioc_code": "paak",
+  "ioc_code": "paak2",
   "sensor": "wls",
   "notes": "start in june 2022",
   "skip": false,
@@ -14,6 +14,5 @@
   "dropped_timestamps": [
     "2025-06-04T17:21:00",
     "2025-06-04T17:24:00"
-  ],
-  "segments": []
+  ]
 }

@@ -7,7 +7,7 @@ for cleaning tide gauge data from [IOC](https://www.ioc-sealevelmonitoring.org/l
 All stations with clean data between 1st of January 2020 and the 31st of december 2025.
 
 <iframe
-  src="cleaned_map.html"
+  src="assets/cleaned_map.html"
   width="100%"
   height="740"
   style="border:none;">
@@ -47,7 +47,7 @@ df_clean = C.transform(df_raw, trans)
 
 ### From raw signal...
 <iframe
-  src="example.html"
+  src="assets/example.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -57,7 +57,7 @@ df_clean = C.transform(df_raw, trans)
 
 ### ... to clean signal
 <iframe
-  src="example_clean.html"
+  src="assets/example_clean.html"
   width="100%"
   height="710"
   style="border:none;">

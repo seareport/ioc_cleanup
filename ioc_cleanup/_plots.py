@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import typing as T
 from pathlib import Path
 
@@ -9,6 +10,7 @@ import pandas as pd
 import panel as pn
 import param
 
+from . import _searvey
 from . import _tools
 
 
@@ -40,7 +42,26 @@ class UI:
         value=None,
         width=200,
     )
-    apply: T.Any = pn.widgets.Button(name="Apply", button_type="primary")
+    apply: T.Any = pn.widgets.Button(
+        name="Apply",
+        button_type="primary",
+        # Button has no ``color`` param in this Panel version; use a stylesheet
+        # to give it a custom hex color (background + hover + border).
+        stylesheets=[
+            """
+            :host { --design-primary-color: #0f7a74; }
+            .bk-btn.bk-btn-primary {
+                background-color: #0f7a74;
+                border-color: #0f7a74;
+                color: white;
+            }
+            .bk-btn.bk-btn-primary:hover {
+                background-color: #0c635e;
+                border-color: #0c635e;
+            }
+            """,
+        ],
+    )
     apply.on_click(apply_callback)
 
 
@@ -152,6 +173,7 @@ def plot_line(df: pd.Series) -> hv.Curve:
         grid=True,
         alpha=0.5,
         c="r",
+        ylabel="Water level (m)",
     ).opts(
         responsive=True,
         ylim=(df.min() * 1.001, df.max() * 1.001),
@@ -174,8 +196,6 @@ def plot_points(df: pd.Series) -> hv.Scatter:
 
 
 def select_points() -> T.Any:
-    on_apply = pn.depends(UI.apply)
-
     def plot_dashboard(_event: T.Any) -> T.Any:
         year = UI.year.value
         surge = UI.surge.value
@@ -206,7 +226,11 @@ def select_points() -> T.Any:
             selection.add_subscriber(lambda index: print_all_points(df=df, indices=index, text_box=points_all))
             selection.add_subscriber(lambda index: print_segment(df=df, indices=index, text_box=segment))
 
-            plot = curve * points
+            ioc = _searvey.get_meta()
+            item = ioc[ioc.ioc_code == station].iloc[0]
+            plot = (curve * points).opts(
+                title=f"{item.location} ({item.country}) - ioc_code: {item.ioc_code}, sensor: {sensor}",
+            )
 
         except Exception as e:
             ts = pd.date_range(f"{year}", f"{year+1}", freq="24h")
@@ -231,9 +255,44 @@ def select_points() -> T.Any:
             ),
         )
 
+    def _spinner(message: str) -> pn.Column:
+        return pn.Column(
+            pn.indicators.LoadingSpinner(
+                value=True,
+                size=60,
+                color="primary",
+                name=message,
+                stylesheets=[":host { --primary-bg-color: #0f7a74; }"],
+            ),
+            align="center",
+            sizing_mode="stretch_width",
+        )
+
+    async def dashboard_view(_apply: T.Any) -> T.Any:
+        # Async generator: each ``yield`` updates the displayed pane. Show a
+        # spinner first, load the (cached) metadata off the event loop, then show
+        # a second spinner while the plot/detide analysis is built in a worker
+        # thread, and finally yield the dashboard. Running the heavy work off the
+        # event loop lets the intermediate spinner actually render.
+        yield _spinner("Loading IOC station metadata…")
+        await asyncio.to_thread(_searvey.get_meta)
+
+        message = "Running detide analysis…" if UI.surge.value else "Loading data…"
+        yield _spinner(message)
+        result = await asyncio.to_thread(plot_dashboard, _apply)
+        yield result
+
+    main = pn.Column(
+        pn.bind(dashboard_view, UI.apply),
+        min_height=700,
+        sizing_mode="stretch_width",
+    )
+
     page = pn.template.FastListTemplate(
         sidebar_width=250,
         title="IOC Cleanup dashboard",
+        header_background="#0f7a74",
+        accent_base_color="#0f7a74",
         sidebar=[
             UI.station_sensor,
             UI.year,
@@ -241,9 +300,7 @@ def select_points() -> T.Any:
             UI.demean,
             UI.apply,
         ],
-        main=pn.Column(
-            on_apply(plot_dashboard),
-        ),
+        main=main,
     )
 
     return page.servable()

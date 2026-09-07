@@ -1,8 +1,8 @@
 {
   "ioc_code": "talc2",
   "sensor": "prs",
-  "notes": "",
-  "skip": false,
+  "notes": "talc station already done",
+  "skip": true,
   "wip": false,
   "start": "2022-01-01T00:00:00",
   "end": "2023-11-01T00:00:00",
@@ -22,6 +22,5 @@
       "2023-05-17T22:15:37"
     ]
   ],
-  "dropped_timestamps": [],
-  "segments": []
+  "dropped_timestamps": []
 }

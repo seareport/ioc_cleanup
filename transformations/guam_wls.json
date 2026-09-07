@@ -11,6 +11,5 @@
   "dropped_date_ranges": [
     ["2020-07-18T01:00:00", "2020-07-18T07:24:00"]
   ],
-  "dropped_timestamps": [],
-  "segments": []
+  "dropped_timestamps": []
 }

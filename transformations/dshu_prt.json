@@ -11,19 +11,5 @@
     "dropped_date_ranges": [
     ],
     "dropped_timestamps": [
-    ],
-    "segments": [
-    {
-      "start": "2022-01-01T00:00:00",
-      "end": "2024-05-15T12:00:00",
-      "offset": -4486.1,
-      "scale_factor": 1.0
-    },
-    {
-      "start": "2024-05-17T01:15:00",
-      "end": "2025-01-01T00:00:00",
-      "offset": -4504.0,
-      "scale_factor": 1.0
-    }
     ]
   }

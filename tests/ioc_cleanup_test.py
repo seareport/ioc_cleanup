@@ -106,6 +106,15 @@ def test_get_notes():
     assert notes == "After 2022-11 it is good. Before that too many spikes"
 
 
+def test_transformation_ioc_code_matches_filename():
+    paths = C._tools.get_transformation_paths()
+    for path in sorted(paths):
+        station, sensor = path.stem.rsplit("_", 1)
+        t = C.load_transformation(station, sensor)
+        assert station == t.ioc_code
+        assert sensor == t.sensor
+
+
 @IOC_SAMPLE
 def test_load_surge_tide_switch(station, data_dir):
     clean = P.load_surge_tide(station, "rad", 2020, surge=False, demean=True, folder=data_dir)

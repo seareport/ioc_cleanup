@@ -9,6 +9,5 @@
   "high": null,
   "low": null,
   "dropped_date_ranges": [],
-  "dropped_timestamps": [],
-  "segments": []
+  "dropped_timestamps": []
 }

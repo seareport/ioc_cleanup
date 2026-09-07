@@ -2,17 +2,15 @@ from __future__ import annotations
 
 import pathlib
 import typing as T
-from pathlib import Path
 
 import multifutures
 import pandas as pd
 
 from . import _searvey
 from . import _tools
-from ._constants import DETIDE_END
-from ._constants import DETIDE_START
-from ._constants import SIMULATION_END
-from ._constants import SIMULATION_START
+from ._constants import DATA_DIR
+from ._constants import END
+from ._constants import START
 
 
 def calc_ratio(sr: pd.Series[float], period: pd.DatetimeIndex) -> float:
@@ -24,14 +22,12 @@ def calc_raw_statistics(sr: pd.Series[float]) -> dict[str, T.Any]:
     interval_value_counts = sr.index.to_series().diff().value_counts()
     main_interval_occurences = interval_value_counts.iloc[0]
     main_interval = T.cast(pd.Timedelta, interval_value_counts.index[0])
-    detide_period = pd.date_range(DETIDE_START, DETIDE_END, freq=main_interval, inclusive="left")
-    simulation_period = pd.date_range(SIMULATION_START, SIMULATION_END, freq=main_interval, inclusive="left")
+    period = pd.date_range(START, END, freq=main_interval, inclusive="left")
     data = {
         "count": len(sr),
         "main_interval": main_interval,
         "main_interval_ratio": main_interval_occurences / len(sr),
-        "detide_ratio": calc_ratio(sr, detide_period),
-        "simulation_ratio": calc_ratio(sr, simulation_period),
+        "availability": calc_ratio(sr.dropna(), period),
         "min": sr.min(),
         "q001": sr.quantile(0.001),
         "q01": sr.quantile(0.01),
@@ -47,7 +43,7 @@ def calc_raw_statistics(sr: pd.Series[float]) -> dict[str, T.Any]:
         "skew": sr.skew(),
         "kurtosis": sr.kurtosis(),
     }
-    data.update(**sr.attrs)  # type: ignore[misc] # Keywords must be string
+    data.update(**sr.attrs)  # type: ignore[arg-type] # Keywords must be string
     return data
 
 
@@ -67,16 +63,7 @@ def calc_station_statistics(meta_row: T.Any, sensor: str, sr: pd.Series[float]) 
 
 def calc_station_statistics_from_path(meta: pd.DataFrame, path: pathlib.Path) -> dict[str, T.Any]:
     ioc_code, sensor = path.stem.split("_")
-    meta_row = meta[meta.ioc_code == ioc_code].iloc[0]
-    df = pd.read_parquet(path)
-    sr = df[sensor]
-    stats = calc_station_statistics(meta_row=meta_row, sensor=sensor, sr=sr)
-    return stats
-
-
-def calc_station_statistics_from_json(meta: pd.DataFrame, path: pathlib.Path) -> dict[str, T.Any]:
-    ioc_code, sensor = path.stem.split("_")
-    raw = _searvey.load_station(ioc_code, Path("./data"), 2020, 2026).sort_index()
+    raw = _searvey.load_station(ioc_code, DATA_DIR, START.year, END.year).sort_index()
     sr = _tools.clean(raw, ioc_code, sensor)
     meta_row = meta[meta.ioc_code == ioc_code].iloc[0]
     stats = calc_station_statistics(meta_row=meta_row, sensor=sensor, sr=sr)
@@ -86,12 +73,5 @@ def calc_station_statistics_from_json(meta: pd.DataFrame, path: pathlib.Path) ->
 def calc_statistics(meta: pd.DataFrame, stations_dir: pathlib.Path, pattern: str = "*.parquet") -> pd.DataFrame:
     func_kwargs = [{"meta": meta, "path": path} for path in stations_dir.glob(pattern)]
     results = multifutures.multiprocess(calc_station_statistics_from_path, func_kwargs, check=True)
-    stats = pd.DataFrame([r.result for r in results])
-    return stats
-
-
-def calc_statistics_json(meta: pd.DataFrame, stations_dir: pathlib.Path, pattern: str = "*.json") -> pd.DataFrame:
-    func_kwargs = [{"meta": meta, "path": path} for path in stations_dir.glob(pattern)]
-    results = multifutures.multiprocess(calc_station_statistics_from_json, func_kwargs, check=True)
     stats = pd.DataFrame([r.result for r in results])
     return stats
