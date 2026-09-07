@@ -11,6 +11,7 @@ import pandas as pd
 import panel as pn
 import shapely.geometry
 import tqdm
+import xarray as xr
 
 import ioc_cleanup as C
 
@@ -19,7 +20,8 @@ KAMCHATKA_START = pd.Timestamp("2025-07-01")
 KAMCHATKA_END = pd.Timestamp("2025-10-01")
 TONGA_START = pd.Timestamp("2022-01-01")
 TONGA_END = pd.Timestamp("2022-01-31")
-DOCS_DIR = Path("docs/assets")
+DOCS_DIR = Path("docs/")
+SURGE_DIR = Path("surge")
 # plot kwargs
 MAP_COMMON = {
     "geo": True,
@@ -152,12 +154,12 @@ def save_map(hv_map, filename: str, height: int = 700) -> None:
         ),
         width_policy="max",
     )
-    pane.save(str(DOCS_DIR / filename))
+    pane.save(str(DOCS_DIR / "assets" / filename))
 
 
 def get_removed_ratio(meta: pd.DataFrame) -> pd.DataFrame:
     ioc_codes = meta.ioc_code.to_list()
-    meta["cleaned_ratio"] = 0
+    meta["cleaned_ratio"] = 0.0
 
     for station in tqdm.tqdm(ioc_codes):
         for path in sorted(glob.glob(f"./transformations/{station}_*.json")):
@@ -233,18 +235,6 @@ def make_cleaned_stations_map(ioc: pd.DataFrame, clean: list[str]) -> None:
     save_map(clean_map * all_map, "cleaned_map.html")
 
 
-def make_availability_map(stats: pd.DataFrame) -> None:
-    """Build and save the data availability map."""
-    hv_map = stats.hvplot.points(
-        c="availability",
-        clim=(0.1, 1),
-        cmap="rainbow4_r",
-        title="Data availability after cleaning, from 0 to 1 (or 100%)",
-        **MAP_BIG_POINTS,
-    )
-    save_map(hv_map, "data_availability_map.html")
-
-
 def make_cleaned_ratio_map(stats: pd.DataFrame) -> None:
     """Build and save the data availability map."""
     hv_map = stats.hvplot.points(
@@ -286,6 +276,78 @@ def make_bar(df: pd.DataFrame, all_meta: pd.DataFrame, var: str, title: str, nam
     save_map(overlay, name, height=370)
 
 
+def compute_monthly_availability(stats: pd.DataFrame, surge_folder: Path) -> np.ndarray:
+    """Compute monthly availability matrix (stations x months).
+
+    Reads pre-computed surge parquet files and computes the ratio of
+    non-NaN values to expected values per month.
+
+    Returns an array of shape (len(stats), n_months).
+    """
+    import typing as T
+
+    starts = pd.date_range(C.START, C.END, freq="1MS")
+    ends = pd.date_range(C.START, C.END, freq="1ME")
+    n_months = len(ends)
+    tmp = np.zeros((len(stats), n_months))
+
+    for ix, row in stats.iterrows():
+        inpath = surge_folder / f"{row.ioc_code}_{row.sensor}.parquet"
+        if not inpath.exists():
+            tmp[ix, :] = 0
+            continue
+        ts = pd.read_parquet(inpath)
+        for it, (s, e) in enumerate(zip(starts, ends, strict=False)):
+            end = e + pd.Timedelta(days=1)
+            sr = ts.loc[s:end]
+            interval_value_counts = sr.index.to_series().diff().value_counts()
+            if len(interval_value_counts):
+                main_interval = T.cast(pd.Timedelta, interval_value_counts.index[0])
+                period = pd.date_range(s, end, freq=main_interval, inclusive="left")
+                tmp[ix, it] = C._statistics.calc_ratio(sr.dropna(), period)
+            else:
+                tmp[ix, it] = 0
+
+    return tmp
+
+
+def make_availability_heatmap(stats: pd.DataFrame, surge_folder: Path) -> None:
+    """Build and save a station x month availability heatmap."""
+    stations = stats["ioc_code"].to_list()
+    months = pd.date_range(C.START, C.END, freq="1MS")[:-1]
+    tmp = compute_monthly_availability(stats, surge_folder)
+
+    da = xr.DataArray(
+        np.array(tmp, dtype=float),
+        dims=("station", "month"),
+        coords={
+            "station": np.arange(len(stations)),
+            "month": months,
+        },
+    )
+
+    df = da.to_dataframe("availability").reset_index()
+    df["month"] = df["month"].dt.strftime("%Y-%m")
+    df["station_str"] = df["station"].apply(lambda x: stations[x])
+
+    heatmap = df.hvplot.heatmap(
+        x="month",
+        y="station_str",
+        C="availability",
+        cmap="fire",
+        clim=(0, 1),
+        width=900,
+        height=max(400, len(stations) * 7),
+        rot=45,
+        fontscale=0.8,
+    ).opts(
+        default_tools=[],
+        active_tools=[],
+    )
+
+    save_map(heatmap, "data_availability_heatmap.html", height=max(400, len(stations) * 7))
+
+
 def main():
     DOCS_DIR.mkdir(exist_ok=True)
 
@@ -303,8 +365,8 @@ def main():
     make_tsunami_map(kamchatka_tsunamis, ioc, "Kamchatka")
     make_tsunami_map(tonga_tsunamis, ioc, "Tonga")
     make_cleaned_stations_map(ioc, stats.ioc_code.to_list())
-    make_availability_map(stats)
     make_cleaned_ratio_map(stats_with_removed_ratio)
+    make_availability_heatmap(stats, SURGE_DIR)
 
     make_hist(
         stats_with_removed_ratio,
@@ -326,7 +388,6 @@ def main():
         "ocean",
         f"Repartition of the {len(stats)} cleaned stations across oceans",
         "coverage_oceans.html",
-        **BAR,
     )
 
 

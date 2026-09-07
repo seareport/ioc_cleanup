@@ -1,4 +1,9 @@
-## Why `ioc_cleanup`?
+#
+
+!!! success ""
+    This project proposes a **community-driven, version-controlled**     approach where all cleaning decisions are explicitly **recorded** and **auditable**.
+
+## Why?
 
 Cleaning tide gauge data is often:
 
@@ -6,9 +11,6 @@ Cleaning tide gauge data is often:
 - :x: poorly documented
 - :x: hard to reproduce
 - :x: difficult to review or share
-
-!!! success "`ioc_cleanup` concept:"
-    This project proposes a **community-driven, version-controlled**     approach where all cleaning decisions are explicitly **recorded** and **auditable**.
 
 
 ## Concept
@@ -61,22 +63,6 @@ More details in the [JSON format](./reference/json-schema.md)
 
 ## Dataset Details
 
-The following figures have been generated with the helper functions in `scripts/` folder:
-
- 1. `download_ioc.py` to download IOC stations
- 2. `generate_maps.py` to create maps and graphs for the online documentation
- 3. `save_cleaning_scenarios.py` to create the time series graphs used in the online documentation
-
-Steps 2 and 3 require to have run step 1 for all cleaned IOC stations.
-
-The cleaned stations dataset can be retrieved with:
-
-```python
-import ioc_cleanup as C
-ioc = C.get_meta()
-stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.json")
-```
-
 ### Cleaned Stations
 <iframe
   src="./assets/cleaned_map.html"
@@ -85,7 +71,9 @@ stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.js
   style="border:none;">
 </iframe>
 
-### Coverage across oceans
+Download the database as a csv: [**`cleaned_ioc_stations.csv`**](./assets/cleaned_ioc_stations.csv)
+
+### Coverage
 <iframe
   src="./assets/coverage_oceans.html"
   width="100%"
@@ -93,23 +81,17 @@ stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.js
   style="border:none;">
 </iframe>
 
-### Data availability in the 2020 - 2025 period
+### Data availability
 
 <iframe
-  src="./assets/data_availability_map.html"
+  src="./assets/data_availability_heatmap.html"
   width="100%"
-  height="590"
+  height="500"
   style="border:none;">
 </iframe>
 
-<iframe
-  src="./assets/data_availability_hist.html"
-  width="100%"
-  height="320"
-  style="border:none;">
-</iframe>
 
-### Ratio of data removed in the 2020 - 2025 period
+### Ratio of data removed
 
 <iframe
   src="./assets/data_removed_map.html"
@@ -124,3 +106,14 @@ stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.js
   height="320"
   style="border:none;">
 </iframe>
+
+### Note
+
+The above figures have been generated with the helper functions in `scripts/` folder:
+
+ 1. `download_ioc.py` to download IOC stations
+ 2. `generate_stations_csv.py` to build the cleaned stations dataset from the `transformations` folder and the IOC station dataset (from step 1)
+ 3. `generate_maps.py` to create maps and graphs for the online documentation
+ 4. `save_cleaning_scenarios.py` to create the time series graphs used in the online documentation
+
+Steps 3 and 4 require to have run step 1 for all cleaned IOC stations.

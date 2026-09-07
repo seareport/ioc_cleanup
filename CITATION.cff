@@ -1,0 +1,38 @@
+# This CITATION.cff file was generated with cffinit https://bit.ly/cffinit
+
+cff-version: 1.2.0
+title: ioc_cleanup
+message: >-
+  If you use this dataset, please cite it using the metadata
+  from this file.
+type: dataset
+authors:
+  - given-names: Thomas
+    family-names: Saillour
+    name-particle: Thomas
+    affiliation: EC JRC
+    orcid: 'https://orcid.org/0009-0009-1549-2961'
+  - given-names: Panagiotis
+    family-names: Mavrogiorgos
+    name-particle: Thomas
+    affiliation: EC JRC
+identifiers:
+  - type: doi
+    value: 10.5194/egusphere-egu26-7777
+    description: EGU abstract
+  - type: doi
+    value: 10.5281/zenodo.22181274
+    description: Zenodo dataset archive
+repository-code: 'https://github.com/oceanmodeling/ioc_cleanup'
+url: 'https://oceanmodeling.github.io/ioc_cleanup/'
+abstract: >-
+  Reproducible cleaning of sea level data from IOC
+  (Intergovernmental Oceanographic Commission) stations.
+  Includes JSON transformation and python dashboards
+keywords:
+  - in-situ
+  - data-cleaning
+  - data-visualization
+  - reproducible
+  - traceable
+license: GPL-3.0

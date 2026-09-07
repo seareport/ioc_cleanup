@@ -111,7 +111,7 @@ def load_station(
     station: str,
     data_dir: Path = Path("./data"),
     start_year: int = 2011,
-    end_year: int = 2024,
+    end_year: int = 2026,
 ) -> pd.DataFrame:
     """
     Load multi-year IOC data for a station from local Parquet files.
@@ -130,14 +130,16 @@ def load_station(
     for year in range(start_year, end_year):
         path = data_dir / str(year) / f"{station}.parquet"
         if not os.path.exists(path):
+            logger.debug(f"Path does not exist: {path}; no data for {year}")
             continue
         df = pd.read_parquet(path)
         if df.empty:
+            logger.debug(f"DatFrame empty for station {station} in {year}")
             continue
         dfs.append(df)
 
     if dfs:
         return pd.concat(dfs)
     else:
-        logger.error(f"No data found for station {station}")
+        logger.error(f"No data found for station {station} betweeen {start_year} end {end_year}")
         return pd.DataFrame()

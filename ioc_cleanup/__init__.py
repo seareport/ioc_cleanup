@@ -17,10 +17,13 @@ from ._statistics import calc_station_statistics_from_path
 from ._statistics import calc_statistics
 from ._tools import clean
 from ._tools import dump_transformation
+from ._tools import get_transformation_paths
 from ._tools import load_clean_ts_for_year
 from ._tools import load_surge_ts_for_year
 from ._tools import load_transformation
 from ._tools import load_transformation_from_path
+from ._tools import OPTS
+from ._tools import RESAMPLE
 from ._tools import surge
 from ._tools import transform
 
@@ -36,6 +39,7 @@ __all__: list[str] = [
     "dump_transformation",
     "END",
     "get_meta",
+    "get_transformation_paths",
     "load_clean_ts_for_year",
     "load_series_from_json",
     "load_series_from_parquet",
@@ -44,6 +48,8 @@ __all__: list[str] = [
     "load_transformation",
     "load_transformation_from_path",
     "plot_geographic_coverage",
+    "OPTS",
+    "RESAMPLE",
     "select_points",
     "SPLIT_DIR",
     "START",

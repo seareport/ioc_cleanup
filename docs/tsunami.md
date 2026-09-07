@@ -16,7 +16,7 @@ Over the 2020 - 2026 period, major tsunamis have been registered and flagged in 
 [Wikipedia link](https://en.wikipedia.org/wiki/2025_Kamchatka_earthquake)
 
 
-Some X stations recorded the Kamchatka tsunami on the 30th July 2025.
+Some stations recorded the Kamchatka tsunami on the 30th July 2025.
 
 <iframe
   src="./assets/kamchatka_map.html"
@@ -35,3 +35,5 @@ and the highest wave (2.26m) recorded in Crescent city (California)
   height="710"
   style="border:none;">
 </iframe>
+
+See other flagged tsunami events: [https://kiyuu.bosai.go.jp/TwDB/observations/](https://kiyuu.bosai.go.jp/TwDB/observations/)

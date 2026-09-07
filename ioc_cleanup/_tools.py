@@ -15,7 +15,6 @@ from . import _searvey
 
 # PATH
 JSON_DIR = _constants.TRANSFORMATIONS_DIR
-IOC = _searvey.get_meta()
 OPTS = {
     "constit": "auto",
     "method": "ols",  # ols is faster and good for missing data (Ponchaut et al., 2001)
@@ -190,8 +189,7 @@ def surge(ts: pd.Series, opts: T.Mapping[str, T.Any], rsmp: int | None) -> pd.Se
     Parameters:
         ts: Sea-level time series.
         opts: UTide solver options.
-        rsmp: Optional resampling interval in minutes. If provided, the
-            series is resampled before tidal analysis.
+        rsmp: Optional resampling interval in minutes. If provided, the series is resampled before tidal analysis.
 
     Returns:
         Surge (non-tidal residual) time series.
@@ -231,8 +229,12 @@ def load_surge_ts_for_year(
     demean: bool,
 ) -> pd.Series:
     c_ = load_clean_ts_for_year(station, sensor, year, folder, demean=demean)
-    lat = IOC[IOC.ioc_code == station].lat.values[0]
+    ioc = _searvey.get_meta()
+    lat = ioc[ioc.ioc_code == station].lat.values[0]
     OPTS["lat"] = lat
-    s_ = surge(c_, OPTS, RESAMPLE)
-    s_.columns = [sensor]  # type: ignore[attr-defined]
-    return s_
+    if not c_.empty:
+        s_ = surge(c_, OPTS, RESAMPLE)
+        s_.columns = [sensor]  # type: ignore[attr-defined]
+        return s_
+    else:
+        return pd.Series()
